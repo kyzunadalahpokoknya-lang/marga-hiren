@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>261 COMMUNITY - CABANG & OPMEM</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0a;
+            font-family: 'Courier New', 'Monaco', monospace;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* NAVIGASI CUMA 2 */
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 30px 0 40px;
+            border-bottom: 1px solid #8b0000;
+            padding-bottom: 15px;
+        }
+
+        nav button {
+            background: transparent;
+            border: none;
+            color: #888;
+            font-size: 1.8rem;
+            font-weight: bold;
+            font-family: monospace;
+            cursor: pointer;
+            padding: 10px 25px;
+            transition: 0.3s;
+            letter-spacing: 2px;
+        }
+
+        nav button.active {
+            color: #8b0000;
+            text-shadow: 0 0 10px #8b0000;
+            border-bottom: 2px solid #8b0000;
+        }
+
+        nav button:hover {
+            color: #8b0000;
+        }
+
+        /* KONTEN */
+        .content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .content.active-content {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* CARD CABANG */
+        .cabang-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .cabang-item {
+            background: #111;
+            border-left: 4px solid #8b0000;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .cabang-nama {
+            font-weight: bold;
+            color: #8b0000;
+            font-size: 1.1rem;
+        }
+
+        .cabang-hiren {
+            color: #aaa;
+            font-family: monospace;
+        }
+
+        /* CARD INFO */
+        .info-card {
+            background: #0d0d0d;
+            border: 1px solid #222;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .info-card h3 {
+            color: #8b0000;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .rule-list {
+            list-style: none;
+        }
+
+        .rule-list li {
+            padding: 8px 0;
+            border-bottom: 0.5px solid #222;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .rule-list li:before {
+            content: "►";
+            color: #8b0000;
+            margin-right: 12px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 15px;
+            border-top: 1px solid #222;
+            font-size: 0.7rem;
+            color: #444;
+        }
+
+        @media (max-width: 600px) {
+            nav button {
+                font-size: 1.3rem;
+                padding: 8px 15px;
+            }
+            .cabang-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="text-align:center; color:#8b0000; font-size:2rem;">#261 COMMUNITY</h1>
+        
+        <!-- NAVIGASI CUMA 2 -->
+        <nav>
+            <button id="btnCabang" class="active">CABANG</button>
+            <button id="btnInfo">INFORMASI OPMEM</button>
+        </nav>
+
+        <!-- MENU CABANG -->
+        <div id="cabangContent" class="content active-content">
+            <div class="cabang-list" id="cabangList"></div>
+        </div>
+
+        <!-- MENU INFORMASI OPMEM -->
+        <div id="infoContent" class="content">
+            <div class="info-card">
+                <h3>🔴 INFORMASI OPMEM ALL CABANG 🔴</h3>
+                <ul class="rule-list" id="ruleList"></ul>
+            </div>
+        </div>
+
+        <div class="footer">
+            #261 COMMUNITY | NEGGAME
+        </div>
+    </div>
+
+    <script>
+        // DATA CABANG (dari perintah Yang Mulia)
+        const cabangData = [
+            { nama: "𝐇𝐈𝐑𝐄𝐍 𝐂𝐔𝐓", hiren: "𝐑𝐄𝐑𝐄" },
+            { nama: "𝐌𝐀𝐑𝐆𝐀 𝐇𝐈𝐑𝐄𝐍", hiren: "𝐆𝐈𝐙𝐄𝐓" },
+            { nama: "𝐇𝐈𝐑𝐄𝐍 𝐔𝐓𝐀𝐌𝐀", hiren: "𝐉𝐀𝐕𝐈𝐄𝐑" },
+            { nama: "𝐇𝐈𝐑𝐄𝐍 𝐍𝐎𝐗𝐄𝐑𝐀", hiren: "𝐀𝐒𝐘𝐀" },
+            { nama: "𝐇𝐈𝐑𝐄𝐍 𝐎𝐅𝐂", hiren: "𝐀𝐋𝐘𝐀" },
+            { nama: "𝐇𝐈𝐑𝐄𝐍 𝐕𝐄𝐍𝐀𝐓𝐑𝐈𝐗", hiren: "𝐊𝐄𝐘𝐍𝐈𝐂𝐄" },
+            { nama: "𝐇𝐈𝐑𝐄𝐍 𝐈𝐍𝐓𝐈", hiren: "𝐘𝐀𝐘𝐀" },
+            { nama: "𝐇𝐈𝐑𝐄𝐍 𝐀𝐑𝐄𝐀", hiren: "𝐏𝐀𝐔𝐋𝐙𝐘" },
+            { nama: "𝐇𝐈𝐑𝐄𝐍 𝐄𝐋𝐈𝐓𝐄", hiren: "𝐂𝐄𝐋𝐋𝐎" },
+            { nama: "𝐇𝐈𝐑𝐄𝐍 𝐍𝐀𝐈𝐋𝐎𝐍𝐆", hiren: "𝐘𝐀𝐘𝐀" },
+            { nama: "𝐇𝐈𝐑𝐄𝐍 𝐏𝐔𝐁𝐋𝐈𝐂", hiren: "𝐘𝐔𝐋𝐈" },
+            { nama: "𝐇𝐈𝐑𝐄𝐍 𝐗 𝐓𝐁𝐀𝐆", hiren: "𝐀𝐘𝐔" },
+            { nama: "𝐇𝐈𝐑𝐄𝐍 𝐂𝐇𝐈𝐍𝐄𝐒𝐄", hiren: "𝐊𝐘𝐙𝐔𝐍" }
+        ];
+
+        // DATA INFORMASI OPMEM
+        const infoRules = [
+            "𝐔𝐌𝐔𝐑 𝐎𝐍𝐋𝐘 𝟏𝟓+",
+            "𝐍𝐎 𝐅𝐀𝐊𝐄𝐑/𝐏𝐈𝐍",
+            "𝐍𝐎 𝐉𝐎𝐌𝐎𝐊",
+            "𝐍𝐎 𝐁𝐀𝐏𝐄𝐑𝐀𝐍",
+            "𝐍𝐎 𝐒𝐇𝐄𝐑𝐋𝐍𝐊",
+            "𝐍𝐎 𝐁𝐔𝐋𝐋𝐘",
+            "𝐀𝐓𝐓𝐈𝐓𝐔𝐃𝐄 𝐍𝐔𝐌𝐁𝐄𝐑 𝐎𝐍𝐄",
+            "𝐈𝐍𝐓𝐑𝐎 𝐏𝐀𝐊𝐄 𝐅𝐓/𝐕𝐓",
+            "𝐍𝐎 𝐁𝐈𝐒𝐔",
+            "𝐍𝐎 𝐓𝐀𝐆 𝐆𝐁 𝐊𝐀𝐋𝐎 𝐆𝐀 𝐍𝐈𝐌𝐁𝐑𝐔𝐍𝐆",
+            "𝐍𝐎 𝐊𝐄𝐋𝐔𝐀𝐑 𝐌𝐀𝐒𝐔𝐊 𝐆𝐁"
+        ];
+
+        // RENDER CABANG
+        function renderCabang() {
+            const container = document.getElementById('cabangList');
+            container.innerHTML = '';
+            cabangData.forEach(cabang => {
+                const div = document.createElement('div');
+                div.className = 'cabang-item';
+                div.innerHTML = `
+                    <span class="cabang-nama">${cabang.nama}</span>
+                    <span class="cabang-hiren">➤ ${cabang.hiren}</span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // RENDER INFO OPMEM
+        function renderInfo() {
+            const container = document.getElementById('ruleList');
+            container.innerHTML = '';
+            infoRules.forEach(rule => {
+                const li = document.createElement('li');
+                li.textContent = rule;
+                container.appendChild(li);
+            });
+        }
+
+        // NAVIGASI SWITCH
+        const btnCabang = document.getElementById('btnCabang');
+        const btnInfo = document.getElementById('btnInfo');
+        const cabangContent = document.getElementById('cabangContent');
+        const infoContent = document.getElementById('infoContent');
+
+        function setActive(tab) {
+            btnCabang.classList.remove('active');
+            btnInfo.classList.remove('active');
+            cabangContent.classList.remove('active-content');
+            infoContent.classList.remove('active-content');
+
+            if (tab === 'cabang') {
+                btnCabang.classList.add('active');
+                cabangContent.classList.add('active-content');
+            } else {
+                btnInfo.classList.add('active');
+                infoContent.classList.add('active-content');
+            }
+        }
+
+        btnCabang.addEventListener('click', () => setActive('cabang'));
+        btnInfo.addEventListener('click', () => setActive('info'));
+
+        // INIT
+        renderCabang();
+        renderInfo();
+    </script>
+</body>
+</html>
